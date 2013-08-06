@@ -1,5 +1,9 @@
 Revision history for Perl extension HTTP-Response-Switch
 
+1.1.1   2013-08-06
+
+  - Minor documentation adjustments.
+
 1.1.0   2013-08-06
 
   - Rename "load_handlers" to "load_classes" and make it also load the

@@ -1,6 +1,6 @@
 package HTTP::Response::Switch;
 {
-  $HTTP::Response::Switch::VERSION = '1.1.0';
+  $HTTP::Response::Switch::VERSION = '1.1.1';
 }
 # ABSTRACT: handle many HTTP response possibilities
 
@@ -76,7 +76,7 @@ HTTP::Response::Switch - handle many HTTP response possibilities
 
 =head1 VERSION
 
-This module is part of distribution HTTP-Response-Switch v1.1.0.
+This module is part of distribution HTTP-Response-Switch v1.1.1.
 
 This distribution's version numbering follows the conventions defined at L<semver.org|http://semver.org/>.
 
@@ -209,6 +209,18 @@ Refer to the L</SYNOPSIS> above.  Further information on configuring a
 "dispatcher" class follows in subsequent sections.  See
 L<HTTP::Response::Switch::Handler> for further information on writing
 "handler" classes.
+
+In order to better understand how this distribution's code is intended
+to be used, inspecting the source code of the following known dependent
+distributions may also be helpful:
+
+=over 4
+
+=item *
+
+L<Finance::Bank::Bankwest> v1.2.2 and later
+
+=back
 
 =head1 METHODS TO DEFINE IN CONSUMING CLASSES
 

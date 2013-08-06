@@ -2,7 +2,7 @@ NAME
     HTTP::Response::Switch - handle many HTTP response possibilities
 
 VERSION
-    This module is part of distribution HTTP-Response-Switch v1.1.0.
+    This module is part of distribution HTTP-Response-Switch v1.1.1.
 
     This distribution's version numbering follows the conventions defined at
     semver.org <http://semver.org/>.
@@ -112,6 +112,12 @@ USAGE
     "dispatcher" class follows in subsequent sections. See
     HTTP::Response::Switch::Handler for further information on writing
     "handler" classes.
+
+    In order to better understand how this distribution's code is intended
+    to be used, inspecting the source code of the following known dependent
+    distributions may also be helpful:
+
+    *   Finance::Bank::Bankwest v1.2.2 and later
 
 METHODS TO DEFINE IN CONSUMING CLASSES
     These methods can be defined in a consuming class in order to customise

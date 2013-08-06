@@ -1,6 +1,6 @@
 package HTTP::Response::Switch::Handler;
 {
-  $HTTP::Response::Switch::Handler::VERSION = '1.1.0';
+  $HTTP::Response::Switch::Handler::VERSION = '1.1.1';
 }
 # ABSTRACT: handle one specific type of HTTP::Response
 
@@ -39,7 +39,7 @@ HTTP::Response::Switch::Handler - handle one specific type of HTTP::Response
 
 =head1 VERSION
 
-This module is part of distribution HTTP-Response-Switch v1.1.0.
+This module is part of distribution HTTP-Response-Switch v1.1.1.
 
 This distribution's version numbering follows the conventions defined at L<semver.org|http://semver.org/>.
 
