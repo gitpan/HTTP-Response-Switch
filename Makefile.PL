@@ -21,6 +21,7 @@ my %WriteMakefileArgs = (
   "NAME" => "HTTP::Response::Switch",
   "PREREQ_PM" => {
     "Module::Find" => 0,
+    "Module::Load" => 0,
     "Moose" => 0,
     "Throwable" => "0.200001",
     "TryCatch" => "1.001000",
@@ -35,7 +36,7 @@ my %WriteMakefileArgs = (
     "Test::More" => 0,
     "Test::Routine" => 0
   },
-  "VERSION" => "1.0.0",
+  "VERSION" => "1.1.0",
   "test" => {
     "TESTS" => "t/*.t"
   }

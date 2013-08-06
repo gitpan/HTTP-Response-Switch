@@ -1,6 +1,6 @@
 package HTTP::Response::Switch::HandlerDeclinedResponse;
 {
-  $HTTP::Response::Switch::HandlerDeclinedResponse::VERSION = '1.0.0';
+  $HTTP::Response::Switch::HandlerDeclinedResponse::VERSION = '1.1.0';
 }
 # ABSTRACT: unrecognised HTTP::Response exception class
 
@@ -26,7 +26,7 @@ HTTP::Response::Switch::HandlerDeclinedResponse - unrecognised HTTP::Response ex
 
 =head1 VERSION
 
-This module is part of distribution HTTP-Response-Switch v1.0.0.
+This module is part of distribution HTTP-Response-Switch v1.1.0.
 
 This distribution's version numbering follows the conventions defined at L<semver.org|http://semver.org/>.
 

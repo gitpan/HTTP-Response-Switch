@@ -8,14 +8,6 @@ use Module::Loaded 'is_loaded';
 use Scalar::Util 'refaddr';
 
 {
-    package t::DispatcherException;
-    use Moose;
-    with 'Throwable';
-
-    has 'response' => ( is => 'ro', required => 1 );
-}
-
-{
     package t::MyDispatcher1;
     use Moose;
     with 'HTTP::Response::Switch';
@@ -30,7 +22,7 @@ use Scalar::Util 'refaddr';
     with 'HTTP::Response::Switch';
 
     sub handler_namespace { 't::lib::MyHandlers' }
-    sub default_exception { 't::DispatcherException' }
+    sub default_exception { 't::lib::DispatcherException' }
 }
 
 test 'default_exception must act as documented' => sub {
@@ -46,22 +38,34 @@ test 'default_handlers must default to empty list' => sub {
     );
 };
 
-test 'load_handlers must cause handlers to load' => sub {
+test 'load_classes must cause handlers and exception to load' => sub {
     for (qw{ Yes No Oops }) {
         ok(
             (not is_loaded("t::lib::MyHandlers::$_")),
             "handler $_ must not be loaded beforehand",
         );
     }
+    ok(
+        (not is_loaded('t::lib::DispatcherException')),
+        'exception class must not be loaded beforehand',
+    );
     lives_ok
-        { t::MyDispatcher1->load_handlers }
-        'call to load_handlers must succeed';
+        { t::MyDispatcher2->load_classes }
+        'call to load_classes must succeed';
     for (qw{ Yes No Oops }) {
         ok(
             is_loaded("t::lib::MyHandlers::$_"),
             "handler $_ must be loaded afterwards",
         );
     }
+    ok(
+        is_loaded('t::lib::DispatcherException'),
+        'exception class must be loaded afterwards',
+    );
+};
+
+test 'load_classes must survive if default_exception dies' => sub {
+    lives_ok { t::MyDispatcher1->load_classes };
 };
 
 my $r = HTTP::Response->new;
@@ -69,7 +73,7 @@ my $r = HTTP::Response->new;
 test 'default exception must be thrown as defined' => sub {
     throws_ok
         { t::MyDispatcher2->handle($r) }
-        't::DispatcherException';
+        't::lib::DispatcherException';
     my $e = $@;
     is refaddr $e->response, refaddr $r,
         'thrown exception must reference correct HTTP::Response';
@@ -78,7 +82,7 @@ test 'default exception must be thrown as defined' => sub {
 test 'default exception must be thrown if all handlers decline' => sub {
     throws_ok
         { t::MyDispatcher2->handle($r, 'No') }
-        't::DispatcherException';
+        't::lib::DispatcherException';
 };
 
 test 'unexpected errors in handlers must propagate' => sub {

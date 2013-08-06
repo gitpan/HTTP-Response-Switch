@@ -1,6 +1,6 @@
 package HTTP::Response::Switch;
 {
-  $HTTP::Response::Switch::VERSION = '1.0.0';
+  $HTTP::Response::Switch::VERSION = '1.1.0';
 }
 # ABSTRACT: handle many HTTP response possibilities
 
@@ -10,6 +10,7 @@ use namespace::autoclean;
 
 use HTTP::Response::Switch::HandlerDeclinedResponse ();
 use Module::Find ();
+use Module::Load ();
 use TryCatch 1.001000; # for bug fix; imports "try" and "catch"
 
 
@@ -22,10 +23,22 @@ sub default_handlers { () }
 sub default_exception { die 'unexpected HTTP response' }
 
 
-sub load_handlers {
+sub load_classes {
     my $class = shift;
+
+    # Load all of the classes under the handler_namespace.
     Module::Find::useall($class->handler_namespace);
+
+    # If the "default_exception" method returns a string then treat it
+    # as an exception class.  Ignore any failures, because any failures
+    # are probably by design (e.g. the default implementation).
+    my $exception_class;
+    Module::Load::load($exception_class)
+        if eval { $exception_class = $class->default_exception; 1 };
 }
+
+
+sub load_handlers { goto &load_classes; }
 
 
 sub handle {
@@ -63,7 +76,7 @@ HTTP::Response::Switch - handle many HTTP response possibilities
 
 =head1 VERSION
 
-This module is part of distribution HTTP-Response-Switch v1.0.0.
+This module is part of distribution HTTP-Response-Switch v1.1.0.
 
 This distribution's version numbering follows the conventions defined at L<semver.org|http://semver.org/>.
 
@@ -85,8 +98,9 @@ Define a "dispatcher" for the application code to use directly:
     # by any of the specified handlers.
     sub default_exception { 'MyProject::Error::BadWebResponse' }
 
-    # Load all of the handlers at compile-time (recommended).
-    __PACKAGE__->load_handlers;
+    # Load all of the handlers and the exception class at compile time
+    # (recommended).
+    __PACKAGE__->load_classes;
 
 Then, in code that actually talks to the web server:
 
@@ -223,11 +237,15 @@ not defined in the consuming class, an empty list is assumed.
 =head2 default_exception
 
     sub default_exception { 'MyProject::Error::BadWebResponse' }
+    sub default_exception { die 'unexpected HTTP response' } # default
 
 The exception class to throw if, during a call to L</handle> by
 external code, no handlers accept the L<HTTP::Response> in question.
 The instance of this class will be passed the HTTP response object when
 created, via parameter C<response>.
+
+Alternatively, this method can be written to throw an exception
+directly (e.g. using C<die>).
 
 If not defined in the consuming class, the default behaviour in this
 situation is to just C<die> with the message C<unexpected HTTP
@@ -241,17 +259,23 @@ exception classes.
 These methods are intended only to be called on a consuming class by
 that class itself, and not by code external to the class.
 
-=head2 load_handlers
+=head2 load_classes
 
-    __PACKAGE__->load_handlers;
+    __PACKAGE__->load_classes;
 
 Use L<Module::Find> to locate all of the modules under the
-L</handler_namespace> and load them into memory.
+L</handler_namespace> and load them into memory.  Also load the
+L</default_exception> class if one is specified.
 
 The handler modules must be loaded into memory before the first call to
 L</handle> occurs.  Loading them at compile time is recommended; to do
-this, call C<load_handlers> within the consuming class in the manner
+this, call C<load_classes> within the consuming class in the manner
 shown above, outside all C<sub> definitions.
+
+=head2 load_handlers
+
+A deprecated alias for L</load_classes>.  Historically,
+C<load_handlers> did not load the L</default_exception> class.
 
 =head1 METHODS AVAILABLE TO CALLERS OF CONSUMING CLASSES
 
@@ -272,8 +296,9 @@ appropriate exception.
 If none of the handlers accept this C<$http_response>, throw the
 L</default_exception>.
 
-All of the handler classes are assumed to have been loaded into memory
-I<before> this method is first called.  See L</load_handlers>.
+All of the handler classes (and the L</default_exception> class) are
+assumed to have been loaded into memory I<before> this method is first
+called.  See L</load_classes>.
 
 =head1 SEE ALSO
 
